@@ -10,6 +10,8 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.rememberNavController
+import com.kirandroid.mynotes.navigation.SetupNavGraph
 import com.kirandroid.mynotes.ui.theme.MyNotesTheme
 
 class MainActivity : ComponentActivity() {
@@ -17,13 +19,17 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             MyNotesTheme {
-                // A surface container using the 'background' color from the theme
+
+                val navController = rememberNavController()
+                SetupNavGraph(navController = navController)
+
+                /*// A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
                     Greeting("World!")
-                }
+                }*/
             }
         }
     }
