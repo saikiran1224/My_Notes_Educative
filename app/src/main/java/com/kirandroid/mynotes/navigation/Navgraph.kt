@@ -5,7 +5,9 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.kirandroid.mynotes.screens.HomeScreen
 import com.kirandroid.mynotes.screens.LoginScreen
+import com.kirandroid.mynotes.screens.ManageNotesScreen
 import com.kirandroid.mynotes.screens.SplashScreen
 
 @Composable
@@ -24,11 +26,11 @@ fun SetupNavGraph(navController: NavHostController) {
         }
 
         composable(route = Screen.Home.route) {
-          // HomeScreen(navController = navController)
+          HomeScreen(navController = navController)
         }
 
-        composable(route = Screen.ViewNotes.route) {
-           // ViewNotesScreen(navController = navController)
+        composable(route = Screen.ManageNotes.route) {
+           ManageNotesScreen(navController = navController)
         }
 
     }

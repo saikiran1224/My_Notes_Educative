@@ -1,8 +1,10 @@
 package com.kirandroid.mynotes.screens
 
+import android.graphics.drawable.shapes.OvalShape
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
@@ -38,20 +40,24 @@ fun LoginScreen(navController: NavController) {
         var textEmailID by remember { mutableStateOf("") }
         var textPassword by remember { mutableStateOf("") }
 
-        // declaring colors field for OutlinedTextfield
-        val outlinedTextFieldColors: TextFieldColors = TextFieldDefaults.outlinedTextFieldColors(
+        // declaring colors field for OutlinedTextField
+        val outlinedTextFieldColors: TextFieldColors = TextFieldDefaults.colors(
 
-            unfocusedBorderColor = Color.White,
+            unfocusedIndicatorColor = Color.White,
             unfocusedLabelColor = Color.White,
+            unfocusedContainerColor = lightBlue,
 
-            focusedBorderColor = lightYellow,
+            focusedIndicatorColor = lightYellow,
             focusedLabelColor = lightYellow,
+            focusedContainerColor = lightBlue,
 
-            textColor = Color.White,
+            focusedTextColor = lightYellow,
+            unfocusedTextColor = Color.White,
+
             cursorColor = lightYellow,
         )
 
-        Column(modifier = Modifier.padding(20.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+        Column(modifier = Modifier.padding(10.dp), horizontalAlignment = Alignment.CenterHorizontally) {
 
                 // Displaying Login here text
                 Text(text = "Login here!",
@@ -65,7 +71,8 @@ fun LoginScreen(navController: NavController) {
                     modifier = Modifier.padding(top = 70.dp, bottom = 16.dp),
                     onValueChange = { textEmailID = it },
                     label = { Text("Email ID") },
-                    colors = outlinedTextFieldColors
+                    colors = outlinedTextFieldColors,
+                    shape = RoundedCornerShape(15.dp)
                 )
 
                 // Password - OutlinedTextField
@@ -76,12 +83,13 @@ fun LoginScreen(navController: NavController) {
                     visualTransformation = PasswordVisualTransformation(),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                     label = { Text("Password") },
-                    colors = outlinedTextFieldColors
+                    colors = outlinedTextFieldColors,
+                    shape = RoundedCornerShape(15.dp)
                 )
 
-                // Button
-                ElevatedButton(onClick = { /*TODO*/ }, modifier = Modifier.width(150.dp)) {
-                    Text(text = "Sign in", fontSize = 16.sp, color = darkBlue)
+                // Sign-in Button
+                ElevatedButton(onClick = { navController.navigate("home_screen") }, modifier = Modifier.width(150.dp)) {
+                    Text(text = "Sign in", fontSize = 15.sp, color = darkBlue)
                 }
 
 
