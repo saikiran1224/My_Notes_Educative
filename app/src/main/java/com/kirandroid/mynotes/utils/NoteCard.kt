@@ -5,6 +5,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.MaterialTheme.colors
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
@@ -26,25 +27,29 @@ import com.kirandroid.mynotes.ui.theme.lightYellow
 fun NoteCard(noteData: Note, navController: NavController) {
 
     OutlinedCard(modifier = Modifier
-        .padding(start = 10.dp, end = 10.dp, top = 5.dp, bottom = 5.dp)
+        .padding(top = 8.dp, bottom = 8.dp)
         .fillMaxWidth()
         .clickable {
             // passing to Manage Notes screen to able user to either update/delete notes
             navController.navigate("manage_notes_screen")
         },
-        border = BorderStroke(width = 1.dp, color = lightYellow),
-        shape = RoundedCornerShape(18.dp),
+        border = BorderStroke(width = 1.dp, color = Color.White),
+        shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(
-            containerColor = Color.White
+            containerColor = lightBlue
 
-        ), content = {
+        ),
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = 8.dp
+        ),
+        content = {
 
             // Title of notes
-            Text(text = noteData.title, fontSize = 18.sp, color = darkBlue, fontWeight = FontWeight.SemiBold,
-                modifier = Modifier.padding(top = 18.dp, bottom = 5.dp))
+            Text(text = noteData.title, fontSize = 18.sp, color = lightYellow, fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(start = 8.dp, top = 10.dp, bottom = 5.dp, end = 8.dp))
 
             // Description
-            Text(text = noteData.description, fontSize = 16.sp, color = lightBlue, fontWeight = FontWeight.Normal,
-                modifier = Modifier.padding(top = 0.dp, bottom = 18.dp))
+            Text(text = noteData.description, fontSize = 16.sp, color = Color.White, fontWeight = FontWeight.Normal,
+                modifier = Modifier.padding(start = 8.dp,top = 0.dp, bottom = 10.dp, end = 8.dp))
         })
 }

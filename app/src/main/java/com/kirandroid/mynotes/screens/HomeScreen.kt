@@ -76,10 +76,10 @@ import kotlinx.coroutines.withContext
 @Composable
 fun HomeScreen(navController: NavController, homeScreenViewModel: HomeScreenViewModel) {
 
-    // Initialize HomeScreen View model and retrieve notes list from Room Database
-
+    // Created empty list with remember scope to store notes
     val notesList = remember { mutableListOf<Note>() }
 
+    // Performing Async task to load Database and retrieve items
     CoroutineScope(Dispatchers.IO).launch {
 
         val noteDao = NotesDatabase.getDatabase(navController.context).noteDao()
@@ -92,7 +92,7 @@ fun HomeScreen(navController: NavController, homeScreenViewModel: HomeScreenView
         .background(lightBlue)){
 
         // displaying Column
-        Column(modifier = Modifier.padding(20.dp)) {
+        Column(modifier = Modifier.padding(15.dp)) {
 
             // creating to row to display icon for create notes
             Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
@@ -103,7 +103,7 @@ fun HomeScreen(navController: NavController, homeScreenViewModel: HomeScreenView
                       color = lightYellow,
                       fontSize = 28.sp,
                       fontWeight = FontWeight.Bold,
-                      modifier = Modifier.weight(1.8f))
+                      modifier = Modifier.weight(1.9f))
 
                   // making the Icon clickable
                   IconButton(onClick = {
@@ -116,16 +116,35 @@ fun HomeScreen(navController: NavController, homeScreenViewModel: HomeScreenView
                           tint = lightYellow,
                           modifier = Modifier
                               .size(34.dp)
-                              .weight(0.2f),
+                              .weight(0.1f),
                       )
                   } // end of Icon Button
 
               } // end of Row()
 
 
-
-            LoadNotes(notesList = notesList, navController = navController)
-
+            // if there is no data in notes list
+            if (notesList.isEmpty()) {
+                Text(
+                    text = "Uh oh! Add notes using + Button on top right",
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.titleLarge,
+                    modifier = Modifier.padding(vertical = 25.dp)
+                )
+            } else {
+                // displaying LazyColumn if there is data in notesList
+                LazyColumn(contentPadding = PaddingValues(0.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .fillMaxHeight().padding(top = 15.dp, end = 5.dp),
+                    userScrollEnabled = true) {
+                    // passing the size of notesList
+                    items(notesList.size) { index ->
+                        // displaying note card by passing the data
+                        NoteCard(noteData = notesList[index], navController = navController)
+                    }
+                }
+            }
 
 
             // Displaying Column to display notes list
@@ -153,34 +172,9 @@ fun HomeScreen(navController: NavController, homeScreenViewModel: HomeScreenView
 
 @Composable
 fun LoadNotes(notesList: List<Note>, navController: NavController) {
-    // if there is no data in notes list
-    if (notesList.isEmpty()) {
-        Text(
-            text = "Uh oh! Add notes using + Button on top right",
-            textAlign = TextAlign.Center,
-            style = MaterialTheme.typography.titleLarge,
-            modifier = Modifier.padding(vertical = 25.dp)
-        )
-    } else {
-            LoadItems(notesList = notesList, navController = navController)
-    }
+
 }
 
-@Composable
-fun LoadItems(notesList: List<Note>, navController: NavController) {
-    // displaying LazyColumn if there is data in notesList
-    LazyColumn(contentPadding = PaddingValues(20.dp),
-        modifier = Modifier
-            .fillMaxWidth()
-            .fillMaxHeight(),
-        userScrollEnabled = true) {
-        // passing the size of notesList
-        items(notesList.size) { index ->
-            // displaying note card by passing the data
-            NoteCard(noteData = notesList[index], navController = navController)
-        }
-    }
-}
 
 /*fun getNotesData(navController: NavController): List<Note> {
 
