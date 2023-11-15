@@ -1,16 +1,19 @@
 package com.kirandroid.mynotes.data
 
+import androidx.lifecycle.MutableLiveData
 import kotlinx.coroutines.flow.Flow
 
-interface NotesRepository {
+class NotesRepository(private val noteDao: NoteDao) {
 
-    fun getAllNotesStream(): Flow<List<Note>>
+    val getAllNotes = MutableLiveData<List<Note>>()
 
-    fun getNoteStream(id: Int): Flow<Note?>
+    //fun getAllNotesStream(): Flow<List<Note>> = noteDao.getAllNotes()
 
-    suspend fun insertNote(note: Note)
+    fun getNoteStream(id: Int): Flow<Note?> = noteDao.getNote(id)
 
-    suspend fun deleteNote(note: Note)
+    suspend fun insertNote(note: Note) = noteDao.insert(note)
 
-    suspend fun updateNote(note: Note)
+    suspend fun deleteNote(note: Note) = noteDao.delete(note)
+
+    suspend fun updateNote(note: Note) = noteDao.update(note)
 }

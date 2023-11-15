@@ -20,7 +20,7 @@ abstract class NotesDatabase : RoomDatabase() {
         fun getDatabase(context: Context): NotesDatabase {
             // if the Instance is not null, return it, otherwise create a new database instance.
             return Instance ?: synchronized(this) {
-                Room.databaseBuilder(context, NotesDatabase::class.java, "notes_database")
+                Room.databaseBuilder(context, NotesDatabase::class.java, "notes1_database")
                     /**
                      * Setting this option in your app's database builder means that Room
                      * permanently deletes all data from the tables in your database when it

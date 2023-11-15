@@ -1,5 +1,6 @@
 package com.kirandroid.mynotes.screens
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -30,13 +31,22 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.kirandroid.mynotes.data.Note
+import com.kirandroid.mynotes.data.NotesDatabase
 import com.kirandroid.mynotes.ui.theme.darkBlue
 import com.kirandroid.mynotes.ui.theme.lightBlue
 import com.kirandroid.mynotes.ui.theme.lightYellow
+import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 
 @Composable
 fun ManageNotesScreen(navController: NavController) {
+
+
+    // Initialize HomeScreen View model and retrieve notes list from Room Database
+    val noteDao = NotesDatabase.getDatabase(navController.context).noteDao()
+
+    val coroutineScope = MainScope()
 
     Box(modifier = Modifier.fillMaxSize()
         .background(lightBlue)) {
@@ -95,7 +105,17 @@ fun ManageNotesScreen(navController: NavController) {
             )
 
             // Sign-in Button
-            ElevatedButton(onClick = { navController.navigate("home_screen") }, modifier = Modifier.width(150.dp)) {
+            ElevatedButton(onClick = {
+
+                // sending data to Room DB
+                coroutineScope.launch {
+                    //Toast.makeText(navController.context, "" + textNoteTitle + " " + textNoteDescription, Toast.LENGTH_LONG).show()
+                    noteDao.insert(Note(title = textNoteTitle, description = textNoteDescription))
+                    navController.navigate("home_screen")
+                }
+            },
+            modifier = Modifier.width(150.dp)) {
+
                 Text(text = "Save Notes", fontSize = 14.sp, color = darkBlue)
             }
         }
