@@ -82,6 +82,7 @@ fun HomeScreen(navController: NavController, homeScreenViewModel: HomeScreenView
     // Performing Async task to load Database and retrieve items
     CoroutineScope(Dispatchers.IO).launch {
 
+        // accessing database
         val noteDao = NotesDatabase.getDatabase(navController.context).noteDao()
         notesList.addAll(noteDao.getAllNotes())
 
@@ -168,11 +169,6 @@ fun HomeScreen(navController: NavController, homeScreenViewModel: HomeScreenView
             }*/
         }
     }
-}
-
-@Composable
-fun LoadNotes(notesList: List<Note>, navController: NavController) {
-
 }
 
 
