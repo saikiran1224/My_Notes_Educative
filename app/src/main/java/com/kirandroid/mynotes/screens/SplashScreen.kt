@@ -29,7 +29,7 @@ fun SplashScreen(navController: NavController) {
     // AnimationEffect
     LaunchedEffect(key1 = true) {
         delay(3000L)
-        navController.navigate("login_screen")
+        navController.navigate("home_screen")
     }
 
     // Displaying logo

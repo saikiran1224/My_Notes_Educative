@@ -1,6 +1,5 @@
 package com.kirandroid.mynotes.screens
 
-import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -9,10 +8,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.MaterialTheme.colors
-import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -40,7 +37,7 @@ import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 
 @Composable
-fun ManageNotesScreen(navController: NavController) {
+fun CreateNoteScreen(navController: NavController) {
 
 
     // Initialize HomeScreen View model and retrieve notes list from Room Database
@@ -114,6 +111,12 @@ fun ManageNotesScreen(navController: NavController) {
                     navController.navigate("home_screen")
                 }
             },
+            colors = ButtonDefaults.buttonColors(
+
+                disabledContainerColor = Color.LightGray,
+                containerColor = Color.White
+            ),
+            enabled = textNoteTitle.isNotEmpty() && textNoteDescription.isNotEmpty(),
             modifier = Modifier.width(150.dp)) {
 
                 Text(text = "Save Notes", fontSize = 14.sp, color = darkBlue)

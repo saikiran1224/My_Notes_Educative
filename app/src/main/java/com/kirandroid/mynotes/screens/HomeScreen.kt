@@ -1,6 +1,7 @@
 package com.kirandroid.mynotes.screens
 
 import android.annotation.SuppressLint
+import android.text.method.TextKeyListener.clear
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.background
@@ -16,6 +17,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme.colors
@@ -64,14 +66,16 @@ import com.kirandroid.mynotes.utils.NoteCard
 import com.kirandroid.mynotes.viewmodels.HomeScreenViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.forEach
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.util.Collections.addAll
 
 
-
+@OptIn(ExperimentalCoroutinesApi::class)
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
 fun HomeScreen(navController: NavController, homeScreenViewModel: HomeScreenViewModel) {
@@ -79,10 +83,14 @@ fun HomeScreen(navController: NavController, homeScreenViewModel: HomeScreenView
     // Created empty list with remember scope to store notes
     val notesList = remember { mutableListOf<Note>() }
 
-    // Performing Async task to load Database and retrieve items
+    var newNotes = remember {
+        mutableStateListOf<Note>()
+    }
+
     CoroutineScope(Dispatchers.IO).launch {
 
         // accessing database
+        notesList.clear()
         val noteDao = NotesDatabase.getDatabase(navController.context).noteDao()
         notesList.addAll(noteDao.getAllNotes())
 
@@ -96,80 +104,86 @@ fun HomeScreen(navController: NavController, homeScreenViewModel: HomeScreenView
         Column(modifier = Modifier.padding(15.dp)) {
 
             // creating to row to display icon for create notes
-            Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
 
-                  // displaying My Notes text
-                  Text(text = "My Notes",
-                      textAlign = TextAlign.Start,
-                      color = lightYellow,
-                      fontSize = 28.sp,
-                      fontWeight = FontWeight.Bold,
-                      modifier = Modifier.weight(1.9f))
+                // displaying My Notes text
+                Text(
+                    text = "My Notes",
+                    textAlign = TextAlign.Start,
+                    color = lightYellow,
+                    fontSize = 28.sp,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.weight(1.9f)
+                )
 
-                  // making the Icon clickable
-                  IconButton(onClick = {
-                      // navigate user to create notes
-                      navController.navigate("manage_notes_screen")
-                  }) {
-                      // displaying Icon inside IconButton
-                      Icon(painter = painterResource(id = R.drawable.baseline_note_add_24),
-                          contentDescription = "Create notes",
-                          tint = lightYellow,
-                          modifier = Modifier
-                              .size(34.dp)
-                              .weight(0.1f),
-                      )
-                  } // end of Icon Button
+                // making the Icon clickable
+                IconButton(onClick = {
+                    // navigate user to create notes
+                    navController.navigate("create_note_screen")
+                }) {
+                    // displaying Icon inside IconButton
+                    Icon(
+                        painter = painterResource(id = R.drawable.baseline_note_add_24),
+                        contentDescription = "Create notes",
+                        tint = lightYellow,
+                        modifier = Modifier
+                            .size(34.dp)
+                            .weight(0.1f),
+                    )
+                } // end of Icon Button
 
-              } // end of Row()
+            } // end of Row()
 
+            val showNotesList = remember { mutableStateOf(false) }
+
+            // Performing Async task to load Database and retrieve items
+           LaunchedEffect(key1 = Unit) {
+               withContext(Dispatchers.Main) {
+
+                   if (notesList.isNotEmpty()) {
+                       Log.d("TAG", "List of notes: $notesList")
+                       showNotesList.value = true
+
+                       newNotes.addAll(notesList.toMutableStateList())
+
+                      // Log.d("TAG", "inside Lazy Column : $notesList")
+                   }
+
+               }
+           }
 
             // if there is no data in notes list
-            if (notesList.isEmpty()) {
+            if (showNotesList.value) {
+               Log.d("TAG", "New notes: ${newNotes.toList()}")
+                // displaying LazyColumn if there is data in notesList
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .fillMaxHeight()
+                        .padding(top = 15.dp, end = 5.dp),
+                    content = {
+                        items(newNotes.toList()) {
+                            NoteCard(noteData = it, navController = navController)
+                        }
+                    })
+            } else {
                 Text(
                     text = "Uh oh! Add notes using + Button on top right",
                     textAlign = TextAlign.Center,
                     style = MaterialTheme.typography.titleLarge,
                     modifier = Modifier.padding(vertical = 25.dp)
                 )
-            } else {
-                // displaying LazyColumn if there is data in notesList
-                LazyColumn(contentPadding = PaddingValues(0.dp),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .fillMaxHeight().padding(top = 15.dp, end = 5.dp),
-                    userScrollEnabled = true) {
-                    // passing the size of notesList
-                    items(notesList.size) { index ->
-                        // displaying note card by passing the data
-                        NoteCard(noteData = notesList[index], navController = navController)
-                    }
-                }
             }
-
-
-            // Displaying Column to display notes list
-             /* Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.padding(top = 15.dp)
-            ) {
-
-                LaunchedEffect(key1 = Unit) {
-
-                }
-
-                scope.launch {
-                    withContext(Dispatchers.IO) {
-                        notesList = noteDao.getAllNotes()
-                        Toast.makeText(navController.context, " " + notesList.size, Toast.LENGTH_LONG).show()
-                        // passing data to load notes
-                        loadNotes(notesList = notesList, navController = navController)
-                    }
-                }
-            }*/
         }
     }
 }
+
+
+
+
 
 
 /*fun getNotesData(navController: NavController): List<Note> {
