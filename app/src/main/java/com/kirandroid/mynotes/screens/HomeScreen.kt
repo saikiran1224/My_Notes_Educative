@@ -16,6 +16,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
@@ -57,6 +59,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.LottieConstants
+import com.airbnb.lottie.compose.rememberLottieComposition
 import com.kirandroid.mynotes.R
 import com.kirandroid.mynotes.data.Note
 import com.kirandroid.mynotes.data.NotesDatabase
@@ -87,6 +93,10 @@ fun HomeScreen(navController: NavController, homeScreenViewModel: HomeScreenView
         mutableStateListOf<Note>()
     }
 
+    val composition by
+    rememberLottieComposition(spec = LottieCompositionSpec.RawRes(resId = R.raw.no_files_found))
+
+
     CoroutineScope(Dispatchers.IO).launch {
 
         // accessing database
@@ -101,7 +111,7 @@ fun HomeScreen(navController: NavController, homeScreenViewModel: HomeScreenView
         .background(lightBlue)){
 
         // displaying Column
-        Column(modifier = Modifier.padding(15.dp)) {
+        Column(modifier = Modifier.padding(15.dp).fillMaxSize()) {
 
             // creating to row to display icon for create notes
             Row(
@@ -170,12 +180,25 @@ fun HomeScreen(navController: NavController, homeScreenViewModel: HomeScreenView
                         }
                     })
             } else {
-                Text(
-                    text = "Uh oh! Add notes using + Button on top right",
-                    textAlign = TextAlign.Center,
-                    style = MaterialTheme.typography.titleLarge,
-                    modifier = Modifier.padding(vertical = 25.dp)
-                )
+
+                // will be showing no data
+                Column(modifier = Modifier.fillMaxSize(),horizontalAlignment = Alignment.CenterHorizontally) {
+
+                    LottieAnimation(
+                        modifier = Modifier.size(width = 270.dp, height = 350.dp).padding(top = 150.dp),
+                        composition = composition,
+                        iterations = LottieConstants.IterateForever)
+
+                    Text(
+                        text = "Add notes using + Button on top right",
+                        textAlign = TextAlign.Center,
+                        color = Color.White,
+                        fontWeight = FontWeight.SemiBold,
+                        modifier = Modifier.padding(vertical = 10.dp),
+                        fontSize = 15.sp
+                    )
+                }
+
             }
         }
     }
