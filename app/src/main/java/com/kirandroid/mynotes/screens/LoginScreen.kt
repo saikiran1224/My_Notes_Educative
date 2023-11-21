@@ -21,21 +21,26 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavController
 import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.LottieConstants
+import com.airbnb.lottie.compose.rememberLottieComposition
 import com.kirandroid.mynotes.R
 import com.kirandroid.mynotes.ui.theme.darkBlue
 import com.kirandroid.mynotes.ui.theme.lightBlue
 import com.kirandroid.mynotes.ui.theme.lightYellow
+import com.kirandroid.mynotes.ui.theme.paleBlue
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginScreen(navController: NavController) {
 
-    val errorDialog = remember { mutableStateOf(false) }
+    val invalidCredentialsDialog = remember { mutableStateOf(false) }
 
     Box(
         contentAlignment = Alignment.Center, // aligning all the contents of the Box vertically and horizontally centered
@@ -100,11 +105,11 @@ fun LoginScreen(navController: NavController) {
                     onClick = {
                         
                            // checking user credentials
-                        if (textEmailID == "saikiran" && textPassword == "123456") {
+                        if (textEmailID == "educative" && textPassword == "123456") {
                             navController.navigate("home_screen")
                         } else {
                             // show animation - wrong password
-                            errorDialog.value = true
+                            invalidCredentialsDialog.value = true
                         }
                       },
                     colors = ButtonDefaults.buttonColors(
@@ -117,40 +122,36 @@ fun LoginScreen(navController: NavController) {
                     Text(text = "Sign in", fontSize = 15.sp, color = darkBlue)
                 }
 
-            if (errorDialog.value) {
-                DialogWithImage(
-                    onDismissRequest = { errorDialog.value = false },
-                    onConfirmation = {
-                        errorDialog.value = false
-                        println("Confirmation registered") // Add logic here to handle confirmation.
-                    },
-                    painter = painterResource(id = R.drawable.splash_logo),
-                    imageDescription = "Sample",
+            if (invalidCredentialsDialog.value) {
+                InvalidCredentialsDialog(
+                    onDismissRequest = { invalidCredentialsDialog.value = false },
                 )
             }
 
 
             }
     }
-
-
 }
 
 @Composable
-fun DialogWithImage(
-    onDismissRequest: () -> Unit,
-    onConfirmation: () -> Unit,
-    painter: Painter,
-    imageDescription: String,
+fun InvalidCredentialsDialog(
+    onDismissRequest: () -> Unit
 ) {
+
+    val composition by
+    rememberLottieComposition(spec = LottieCompositionSpec.RawRes(resId = R.raw.sad_emoji_anim))
+
     Dialog(onDismissRequest = { onDismissRequest() }) {
         // Draw a rectangle shape with rounded corners inside the dialog
         Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(375.dp)
+                .height(355.dp)
                 .padding(16.dp),
             shape = RoundedCornerShape(16.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = paleBlue
+            )
         ) {
             Column(
                 modifier = Modifier
@@ -159,37 +160,33 @@ fun DialogWithImage(
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
 
-                //  LottieAnimation(composition = , progress = { /*TODO*/ })
-                Image(
-                    painter = painter,
-                    contentDescription = imageDescription,
-                    contentScale = ContentScale.Fit,
+                // displaying Delete Animation
+                LottieAnimation(
                     modifier = Modifier
-                        .height(160.dp)
-                )
+                        .size(width = 300.dp, height = 180.dp),
+                    composition = composition,
+                    iterations = LottieConstants.IterateForever,
+
+                    )
+
                 Text(
-                    text = "This is a dialog with buttons and an image.",
-                    modifier = Modifier.padding(16.dp),
+                    text = "Sorry! Invalid credentials. Please try again",
+                    modifier = Modifier.padding(10.dp).fillMaxWidth(),
+                    fontWeight = FontWeight.Bold,
+                    color = Color.Red,
+                    textAlign = TextAlign.Center
                 )
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center,
-                ) {
+
+                // Buttons for Dismiss and Confirm
+
                     TextButton(
                         onClick = { onDismissRequest() },
                         modifier = Modifier.padding(8.dp),
                     ) {
-                        Text("Dismiss")
+                        Text("Okay", color = darkBlue, fontWeight = FontWeight.Bold)
                     }
-                    TextButton(
-                        onClick = { onConfirmation() },
-                        modifier = Modifier.padding(8.dp),
-                    ) {
-                        Text("Confirm")
-                    }
-                }
             }
         }
     }
 }
+
